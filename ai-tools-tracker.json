@@ -1,0 +1,442 @@
+{
+  "name": "AI tools tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        80
+      ],
+      "id": "e6f0fafa-d34f-452e-acbe-cbb1b1e10bc9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://hnrss.org/newest?q=AI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "08ee0b19-b882-4579-b20f-3e15fc2a7c74",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.producthunt.com/feed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        160
+      ],
+      "id": "31303089-8727-48f3-8567-88cf714973e9",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1040,
+        80
+      ],
+      "id": "29b674f8-f297-4df2-9e66-4c19d44eb753",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "18617f0b-3005-4caa-9301-dfcb954ef408",
+              "leftValue": "={{ ($json.title || \"\").toLowerCase() + \" \" + ($json.contentSnippet || \"\").toLowerCase() }}",
+              "rightValue": "ai",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "00364a97-e6df-453f-9b25-a1e5865cdee6",
+              "leftValue": "={{ ($json.title || \"\").toLowerCase() + \" \" + ($json.contentSnippet || \"\").toLowerCase() }}",
+              "rightValue": "gpt",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "3e8e5beb-1e8a-49e4-a88e-8e554c2f70f4",
+              "leftValue": "={{ ($json.title || \"\").toLowerCase() + \" \" + ($json.contentSnippet || \"\").toLowerCase() }}",
+              "rightValue": "llm",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "a5b1353c-afb5-4f0a-82dd-0abbc4fa0e12",
+              "leftValue": "={{ ($json.title || \"\").toLowerCase() + \" \" + ($json.contentSnippet || \"\").toLowerCase() }}",
+              "rightValue": "agent",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "4d1cf632-20f6-4d46-ba55-a586f0587f06",
+              "leftValue": "={{ ($json.title || \"\").toLowerCase() + \" \" + ($json.contentSnippet || \"\").toLowerCase() }}",
+              "rightValue": "aritificial intelligence",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        160
+      ],
+      "id": "0c0d70ad-884f-486b-84f5-a5059e835ffa",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        832,
+        160
+      ],
+      "id": "c737c711-2972-499f-a1ec-2bd3da1f4748",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        832,
+        0
+      ],
+      "id": "eabe275d-37b1-48e6-9c95-2a0260b3c131",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AI Tools Tracker",
+          "cachedResultUrl": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "creator": "={{ $json.creator }}",
+            "title": "={{ $json.title }}",
+            "link": "={{ $json.link }}",
+            "pubDate": "={{ $json.pubDate }}",
+            "content": "={{ $json.content }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "creator",
+              "displayName": "creator",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "pubDate",
+              "displayName": "pubDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        80
+      ],
+      "id": "73ef4a56-dca4-4552-a648-611d69197f2c",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@example.com",
+        "subject": "\ud83d\ude80 Daily AI Tool Tracker Update",
+        "message": "=<div style=\"max-width:600px;margin:auto;font-family:Arial,Helvetica,sans-serif;background:#f6f8fb;padding:20px;border-radius:10px;\">\n\n  <h2 style=\"text-align:center;margin-bottom:5px;\">\ud83d\ude80 Daily AI Tool Tracker</h2>\n  <p style=\"text-align:center;color:#666;font-size:14px;margin-top:0;\">\n    Top AI tools from Product Hunt & Hacker News\n  </p>\n\n  {{ $json.items.map((item, index) => `\n    \n    <div style=\"\n      background:#ffffff;\n      padding:14px;\n      margin-top:14px;\n      border-radius:10px;\n      border:1px solid #e5e7eb;\n      box-shadow:0 2px 6px rgba(0,0,0,0.05);\n    \">\n      \n      <div style=\"font-size:12px;color:#888;margin-bottom:6px;\">\n        #${index + 1}\n      </div>\n\n      <h3 style=\"margin:0 0 6px 0;font-size:16px;color:#111;\">\n        ${item.title}\n      </h3>\n\n      <p style=\"margin:0 0 10px 0;font-size:14px;color:#555;line-height:1.4;\">\n        ${item.contentSnippet || \"No description available\"}\n      </p>\n\n      <a href=\"${item.link}\" \n         style=\"\n           display:inline-block;\n           padding:8px 12px;\n           background:#2563eb;\n           color:#fff;\n           text-decoration:none;\n           border-radius:6px;\n           font-size:13px;\n         \">\n         \ud83d\udd17 View Tool\n      </a>\n\n    </div>\n\n  `).join(\"\") }}\n\n  <div style=\"text-align:center;margin-top:20px;font-size:12px;color:#aaa;\">\n    Built with \u2764\ufe0f using n8n\n  </div>\n\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        80
+      ],
+      "id": "389db55d-5656-4588-b1bb-9a1c1d2e67b7",
+      "name": "Send a message"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const title = (item.json.title || \"\").toLowerCase();\n  const desc = (item.json.contentSnippet || \"\").toLowerCase();\n  const text = title + \" \" + desc;\n\n  let score = 0;\n\n  // Strong AI signals\n  if (/gpt|llm|transformer/.test(text)) score += 6;\n  if (/agent|autonomous/.test(text)) score += 5;\n\n  // Medium signals\n  if (/ai|artificial intelligence/.test(text)) score += 3;\n\n  // Weak signals\n  if (/assistant|automation|generate|chat/.test(text)) score += 2;\n\n  // Bonus for real product usefulness\n  if (/developer|api|tool|platform|saas/.test(text)) score += 2;\n\n  // Penalize weak/noise content\n  if (/newsletter|course|guide|tips/.test(text)) score -= 2;\n\n  return {\n    json: {\n      ...item.json,\n      score\n    }\n  };\n})\n.sort((a, b) => b.json.score - a.json.score);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        160
+      ],
+      "id": "6d6ce3fd-c027-4304-b5dc-117374fcae96",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const title = (item.json.title || \"\").toLowerCase();\n  const desc = (item.json.contentSnippet || \"\").toLowerCase();\n  const text = title + \" \" + desc;\n\n  let score = 0;\n\n  // Strong AI signals\n  if (/gpt|llm|transformer/.test(text)) score += 6;\n  if (/agent|autonomous/.test(text)) score += 5;\n\n  // Medium signals\n  if (/ai|artificial intelligence/.test(text)) score += 3;\n\n  // Weak signals\n  if (/assistant|automation|generate|chat/.test(text)) score += 2;\n\n  // Bonus for real product usefulness\n  if (/developer|api|tool|platform|saas/.test(text)) score += 2;\n\n  // Penalize weak/noise content\n  if (/newsletter|course|guide|tips/.test(text)) score -= 2;\n\n  return {\n    json: {\n      ...item.json,\n      score\n    }\n  };\n})\n.sort((a, b) => b.json.score - a.json.score);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "fd2e1c76-32c0-462a-9eab-eb30c38c3b52",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    json: {\n      items: $input.all().map(item => item.json)\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        80
+      ],
+      "id": "7d2e1216-0cf7-4afd-a127-dfdbb6628fad",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  }
+}
