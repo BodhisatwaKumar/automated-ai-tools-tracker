@@ -1,5 +1,7 @@
 # Automated AI Tools & Content Aggregator
 
+![Workflow Canvas](workflow.png)
+
 An automated ingestion pipeline built with **n8n**, running inside a cloud container with persistent **PostgreSQL (Neon)** storage. The workflow aggregates AI tool launches from multiple feeds, scores and filters the entries using custom JavaScript logic, synchronizes records with **Google Sheets**, and dispatches automated digests via the **Gmail API**.
 
 ---
